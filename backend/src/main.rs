@@ -7,6 +7,7 @@ use std::thread;
 use rocket::fs::NamedFile;
 use rocket::response::status::NotFound;
 use std::path::PathBuf;
+use rocket::form::Form;
 
 #[get("/data/<path..>")]
 async fn data(path: PathBuf) -> Result<NamedFile, NotFound<String>> {
@@ -40,17 +41,28 @@ async fn index() -> Result<NamedFile, NotFound<String>> {
   get_index().await
 }
 
-#[get("/command")]
-fn command() -> &'static str {
+#[derive(FromForm)]
+struct Task<'r> {
+    r#prompt: &'r str,
+    steps: u8,
+}
+
+#[post("/command", data = "<task>")]
+async fn command(task: Form<Task<'_>>) {
+  
+  println!("prompt : {} \n steps : {}", task.prompt, task.steps);
+
+  let args = format!("/C start cmd.exe /c \"cd C:\\stable_diff && .\\virtualenv\\Scripts\\activate && python txt2img_onnx.py --model .\\model\\waifu-diffusion-diffusers-onnx-v1-3 --prompt \"{}\" --steps {} --scheduler eulera \"", task.prompt, task.steps);
+
   let output = Command::new("cmd")
-      .raw_arg("/C start cmd.exe /c \"cd C:\\stable_diff && .\\virtualenv\\Scripts\\activate && python txt2img_onnx.py --model .\\model\\waifu-diffusion-diffusers-onnx-v1-3 --prompt \"1girl anime smile blue_hair\" --steps 10 --scheduler eulera \"")
+      .raw_arg(args)
       .output()
       .expect("failed to execute process");
 
       println!("status: {}", output.status);
       println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
       println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
-  "La commande"
+  //"La commande"
 }
 
 #[launch]
@@ -68,5 +80,5 @@ fn rocket() -> _ {
   });*/
 
     rocket::build()
-    .mount("/", routes![index, static_files, data])
+    .mount("/", routes![index, static_files, data, command])
 }

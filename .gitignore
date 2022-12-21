@@ -1,2 +1,4 @@
 /target
 */target
+/ui/dist/*.wasm
+/ui/dist/*.js
