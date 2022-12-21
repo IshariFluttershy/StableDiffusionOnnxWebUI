@@ -23,11 +23,18 @@ impl Component for Home {
                 <h1>{"Building a Website in Rust"}</h1>
                 <form action="/command" method="post">
                     <div class="input-group">
-                        <span class="input-group-text">{"With textarea"}</span>
-                        <textarea class="form-control" aria-label="With textarea" name="prompt"></textarea>
+                        <span class="input-group-text">{"prompt"}</span>
+                        <textarea class="form-control" aria-label="prompt" name="prompt"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">{"negative prompt"}</span>
+                        <textarea class="form-control" aria-label="negative prompt" name="neg_prompt"></textarea>
                     </div>
                     <div>
-                        <Range value=50 text={"steps"} name={"steps"}></Range>
+                        <Range value=15 text={"steps"} name={"steps"}></Range>
+                        <Range value=7 text={"guidance"} name={"guidance"}></Range>
+                        <Range value=512 text={"width"} name={"width"}></Range>
+                        <Range value=512 text={"height"} name={"height"}></Range>
                     </div>
                     <div class="button">
                         <button type="submit">{"Envoyer le message"}</button>

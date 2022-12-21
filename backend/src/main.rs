@@ -44,7 +44,11 @@ async fn index() -> Result<NamedFile, NotFound<String>> {
 #[derive(FromForm)]
 struct Task<'r> {
     r#prompt: &'r str,
+    r#neg_prompt: &'r str,
     steps: u8,
+    guidance: f32,
+    width: u16,
+    height: u16,
 }
 
 #[post("/command", data = "<task>")]
@@ -52,7 +56,17 @@ async fn command(task: Form<Task<'_>>) {
   
   println!("prompt : {} \n steps : {}", task.prompt, task.steps);
 
-  let args = format!("/C start cmd.exe /c \"cd C:\\stable_diff && .\\virtualenv\\Scripts\\activate && python txt2img_onnx.py --model .\\model\\waifu-diffusion-diffusers-onnx-v1-3 --prompt \"{}\" --steps {} --scheduler eulera \"", task.prompt, task.steps);
+  let args = format!("/C start cmd.exe /c \"cd C:\\stable_diff \
+  && .\\virtualenv\\Scripts\\activate \
+  && python txt2img_onnx.py \
+  --model .\\model\\waifu-diffusion-diffusers-onnx-v1-3 \
+  --prompt \"{}\" \
+  --neg_prompt \"{}\" \
+  --guidance-scale \"{}\" \
+  --steps {} \
+  --width {} \
+  --height {} \
+  --scheduler eulera \"", task.prompt, task.neg_prompt, task.guidance, task.steps, task.width, task.height);
 
   let output = Command::new("cmd")
       .raw_arg(args)
