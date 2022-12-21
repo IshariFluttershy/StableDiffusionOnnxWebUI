@@ -4,10 +4,40 @@ use std::{process::Command, os::windows::process::CommandExt};
 use rocket::{response::content, figment::Metadata};
 use rocket_dyn_templates::{Template, context};
 use std::thread;
+use rocket::fs::NamedFile;
+use rocket::response::status::NotFound;
+use std::path::PathBuf;
 
+#[get("/data/<path..>")]
+async fn data(path: PathBuf) -> Result<NamedFile, NotFound<String>> {
+    let path = PathBuf::from("./data/").join(path);
+    match NamedFile::open(path).await {
+        Ok(f) => Ok(f),
+        Err(_) => get_index().await,
+    }
+}
+
+// Return the index file as a Rocket NamedFile
+async fn get_index() -> Result<NamedFile, NotFound<String>> {
+  NamedFile::open("../ui/dist/index.html")
+      .await
+      .map_err(|e| NotFound(e.to_string()))
+}
+
+//Create a route for any url that is a path from the /
+#[get("/<path..>")]
+async fn static_files(path: PathBuf) -> Result<NamedFile, NotFound<String>> {
+  let path = PathBuf::from("../ui/dist").join(path);
+  match NamedFile::open(path).await {
+      Ok(f) => Ok(f),
+      Err(_) => get_index().await,
+  }
+}
+
+// Return the index when the url is /
 #[get("/")]
-fn index() -> &'static str {
-  "Hello world"
+async fn index() -> Result<NamedFile, NotFound<String>> {
+  get_index().await
 }
 
 #[get("/command")]
@@ -38,6 +68,5 @@ fn rocket() -> _ {
   });*/
 
     rocket::build()
-    .mount("/", routes![index])
-    .mount("/", routes![command])
+    .mount("/", routes![index, static_files, data])
 }
