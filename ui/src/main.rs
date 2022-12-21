@@ -1,9 +1,12 @@
 use yew::prelude::*;
 
 mod pages;
+mod components;
+
 
 use pages::home::Home;
 use pages::not_found::NotFound;
+
 use yew_router::prelude::*;
 
 #[derive(Routable, PartialEq, Clone, Debug)]

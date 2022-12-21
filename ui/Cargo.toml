@@ -23,3 +23,6 @@ pulldown-cmark = "0.9.1"
 reqwasm = "0.4.0"
 #A rust serialization library for interacting data between the backend and frontend
 serde = { version = "1.0.133", features = ["derive"] }
+# need wasm-bindgen for JsCast
+wasm-bindgen = "0.2"
+material-yew = {version = "0.2", features = ["button", "slider"] }

@@ -1,5 +1,10 @@
 use yew::prelude::*;
 
+use crate::components;
+
+use components::range::Range;
+
+
 pub struct Home;
 
 impl Component for Home {
@@ -7,6 +12,8 @@ impl Component for Home {
     type Properties = ();
 
     fn create(_ctx: &Context<Self>) -> Self {
+        wasm_logger::init(wasm_logger::Config::default());
+
         Home {}
     }
 
@@ -20,8 +27,10 @@ impl Component for Home {
                         <textarea class="form-control" aria-label="With textarea" name="prompt"></textarea>
                     </div>
                     <div>
-                        <label for="customRange3" class="form-label">{"Example range"}</label>
-                        <input type="range" class="form-range" min="1" max="40" id="customRange3" name="steps"/>
+                        <Range value=50 text={"steps"}></Range>
+                        <Range value=50 text={"steps"}></Range>
+                        <Range value=50 text={"steps"}></Range>
+
                     </div>
                     <div class="button">
                         <button type="submit">{"Envoyer le message"}</button>
