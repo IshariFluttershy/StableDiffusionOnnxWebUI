@@ -1,58 +1,50 @@
 #[macro_use] extern crate rocket;
+use std::{process::Command, os::windows::process::CommandExt};
+
 use rocket::{response::content, figment::Metadata};
 use rocket_dyn_templates::{Template, context};
 
 #[get("/")]
-fn index() -> content::RawHtml<&'static str> {
-    //Metadata::render("home", context! { first_name: "Tanguy", last_name: "Morvant" }))
-    content::RawHtml(
-        r#"<head>
-        <style type="text/css">
-          body {
-            background: #1a6875;
-            font-family: Arial, Helvetica, sans-serif;
-          }
-          .left-side {
-            max-width: 45%;
-            text-align: right;
-            position: absolute;
-            top: 15%;
-            left: 0;
-          }
-          .title {
-            color: #fff;
-            font-size: 5em;
-          }
-          .sub-title {
-            color: #fff;
-            font-size: 1.3em;
-          }
-          .right-side {
-            width: 30em;
-            height: 30em;
-            background: #d0e64c;
-            border-radius: 50%;
-            position: absolute;
-            top: 10%;
-            right: 5%;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="left-side">
-          <h1 class="title">This web app was built with RUST</h1>
-          <p class="sub-title">Hello {{first_name}} {{last_name}}😊</p>
-        </div>
-        <div class="right-side">
-          <div class="round-image"></div>
-        </div>
-      </body>"#
-    )
+fn index() -> &'static str {
+  "Hello world"
+}
+
+#[get("/command")]
+fn command() -> &'static str {
+  "La commande"
+  /*if let Ok(o) = Command::new("cmd")
+    .args(["/C", "timeout 5"])
+    .output() {
+      println!("{:?}", o);
+      "Ca fait une commande !!!"
+    } else {
+      "Eh non"
+    }*/
 }
 
 #[launch]
 fn rocket() -> _ {
+
+  //&& python onnxUI.py
+  /*let output = Command::new("cmd")
+  //.args(["/C", "cd C:\\stable_diff && .\\virtualenv\\Scripts\\activate "])
+  .args(["/C", "start cmd.exe"])
+  .output()
+  .expect("failed to execute process");*/
+
+  let output = Command::new("cmd")
+    .raw_arg("/C start cmd.exe /k \"cd C:\\stable_diff && .\\virtualenv\\Scripts\\activate && python onnxUI.py\"")
+    .output()
+    .expect("failed to execute process");
+
+
+  //let hello = output.stdout;
+
+  println!("status: {}", output.status);
+  println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+  println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
+
     rocket::build()
     .mount("/", routes![index])
-    .attach(Template::fairing())
+    .mount("/", routes![command])
 }
