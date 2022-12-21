@@ -4,11 +4,18 @@ use web_sys::{EventTarget, HtmlInputElement};
 use log::info;
 
 
-#[derive(Properties, PartialEq)]
 pub struct Range {
+    pub value: u32,
+}
+
+#[derive(Properties, PartialEq)]
+pub struct RangeProps {
     pub value: u32,
     pub text: String,
     pub name: String,
+    pub min: u32,
+    pub max: u32,
+    pub step: u32,
 }
 
 pub enum Msg {
@@ -17,17 +24,15 @@ pub enum Msg {
 
 impl Component for Range {
     type Message = Msg;
-    type Properties = Range;
+    type Properties = RangeProps;
 
     fn create(ctx: &Context<Self>) -> Self {
         Range {
             value: ctx.props().value,
-            text: ctx.props().text.clone(),
-            name: ctx.props().name.clone(),
         }  
     }
     
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         use Msg::*;
                 
         match msg {
@@ -58,9 +63,9 @@ impl Component for Range {
 
         html! {
             <div>
-                <label for="customRange" class="form-label">{format!("{} : {}", self.text, self.value)}</label>
+                <label for="customRange" class="form-label">{format!("{} : {}", ctx.props().text, self.value)}</label>
                 <br/>
-                <input type="range" min="1" max="150" step="1" class="form-range" id="myRange" name={self.name.clone()}
+                <input type="range" min={ctx.props().min.to_string()} max={ctx.props().max.to_string()} step={ctx.props().step.to_string()} class="form-range" id="myRange" name={ctx.props().text.clone()}
                     value={self.value.to_string()}
                     //onchange={on_cautious_change}
                     oninput={on_cautious_input}

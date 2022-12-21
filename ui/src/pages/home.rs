@@ -31,10 +31,10 @@ impl Component for Home {
                         <textarea class="form-control" aria-label="negative prompt" name="neg_prompt"></textarea>
                     </div>
                     <div>
-                        <Range value=15 text={"steps"} name={"steps"}></Range>
-                        <Range value=7 text={"guidance"} name={"guidance"}></Range>
-                        <Range value=512 text={"width"} name={"width"}></Range>
-                        <Range value=512 text={"height"} name={"height"}></Range>
+                        <Range value=15 text={"steps"} name={"steps"} min=1 max=150 step=1></Range>
+                        <Range value=7 text={"guidance"} name={"guidance"} min=1 max=50 step=1></Range>
+                        <Range value=512 text={"width"} name={"width"} min=256 max=1024 step=64></Range>
+                        <Range value=512 text={"height"} name={"height"} min=256 max=1024 step=64></Range>
                     </div>
                     <div class="button">
                         <button type="submit">{"Envoyer le message"}</button>
