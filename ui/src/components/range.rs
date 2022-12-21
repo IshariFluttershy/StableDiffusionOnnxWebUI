@@ -8,6 +8,7 @@ use log::info;
 pub struct Range {
     pub value: u32,
     pub text: String,
+    pub name: String,
 }
 
 pub enum Msg {
@@ -22,6 +23,7 @@ impl Component for Range {
         Range {
             value: ctx.props().value,
             text: ctx.props().text.clone(),
+            name: ctx.props().name.clone(),
         }  
     }
     
@@ -58,7 +60,7 @@ impl Component for Range {
             <div>
                 <label for="customRange" class="form-label">{format!("{} : {}", self.text, self.value)}</label>
                 <br/>
-                <input type="range" min="1" max="150" step="1" class="range" id="myRange"
+                <input type="range" min="1" max="150" step="1" class="form-range" id="myRange" name={self.name.clone()}
                     value={self.value.to_string()}
                     //onchange={on_cautious_change}
                     oninput={on_cautious_input}

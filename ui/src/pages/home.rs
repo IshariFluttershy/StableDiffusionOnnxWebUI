@@ -27,10 +27,7 @@ impl Component for Home {
                         <textarea class="form-control" aria-label="With textarea" name="prompt"></textarea>
                     </div>
                     <div>
-                        <Range value=50 text={"steps"}></Range>
-                        <Range value=50 text={"steps"}></Range>
-                        <Range value=50 text={"steps"}></Range>
-
+                        <Range value=50 text={"steps"} name={"steps"}></Range>
                     </div>
                     <div class="button">
                         <button type="submit">{"Envoyer le message"}</button>
