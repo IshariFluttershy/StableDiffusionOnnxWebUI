@@ -5,17 +5,17 @@ use log::info;
 
 
 pub struct Range {
-    pub value: u32,
+    pub value: f32,
 }
 
 #[derive(Properties, PartialEq)]
 pub struct RangeProps {
-    pub value: u32,
+    pub value: f32,
     pub text: String,
     pub name: String,
-    pub min: u32,
-    pub max: u32,
-    pub step: u32,
+    pub min: f32,
+    pub max: f32,
+    pub step: f32,
 }
 
 pub enum Msg {
@@ -37,7 +37,7 @@ impl Component for Range {
                 
         match msg {
             OnChange(input) => {
-                self.value = input.parse::<u32>().unwrap();
+                self.value = input.parse::<f32>().unwrap();
             }
         }
         true
