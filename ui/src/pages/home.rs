@@ -20,7 +20,9 @@ impl Component for Home {
     fn view(&self, _ctx: &Context<Self>) -> Html {
         html! {
             <div class="d-flex justify-content-center m-5">
-                <h1>{"Building a Website in Rust"}</h1>
+                /*<h1>{"Building a Website in Rust"}</h1>*/
+                <br/>
+                <br/>
                 <form action="/command" method="post">
                     <div class="input-group">
                         <span class="input-group-text">{"prompt"}</span>

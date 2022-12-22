@@ -56,6 +56,14 @@ async fn command(task: Form<Task<'_>>) {
   
   println!("prompt : {} \n steps : {}", task.prompt, task.steps);
 
+  if task.prompt.contains("&") {
+    println!("Forbidden character in prompt : {}", task.prompt);
+    return;
+  } else if task.neg_prompt.contains("&") {
+    println!("Forbidden character in negative prompt : {}", task.neg_prompt);
+    return;
+  }
+
   let args = format!("/C start cmd.exe /c \"cd C:\\stable_diff \
   && .\\virtualenv\\Scripts\\activate \
   && python txt2img_onnx.py \
