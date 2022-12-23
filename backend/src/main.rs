@@ -1,9 +1,10 @@
 #[macro_use] extern crate rocket;
 use std::{process::Command, os::windows::process::CommandExt};
 
+use rocket::response::content::RawHtml;
 use rocket::{response::content, figment::Metadata};
 use rocket_dyn_templates::{Template, context};
-use std::thread;
+use std::{thread, fs};
 use rocket::fs::NamedFile;
 use rocket::response::status::NotFound;
 use std::path::PathBuf;
@@ -52,16 +53,14 @@ struct Task<'r> {
 }
 
 #[post("/command", data = "<task>")]
-async fn command(task: Form<Task<'_>>) {
+async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
   
   println!("prompt : {} \n steps : {}", task.prompt, task.steps);
 
   if task.prompt.contains("&") {
-    println!("Forbidden character in prompt : {}", task.prompt);
-    return;
+    return RawHtml(format!("Forbidden character in prompt : {}", task.prompt).clone());
   } else if task.neg_prompt.contains("&") {
-    println!("Forbidden character in negative prompt : {}", task.neg_prompt);
-    return;
+    return RawHtml(format!("Forbidden character in negative prompt : {}", task.neg_prompt).clone());
   }
 
   let args = format!("/C start cmd.exe /c \"cd C:\\stable_diff \
@@ -74,17 +73,23 @@ async fn command(task: Form<Task<'_>>) {
   --steps {} \
   --width {} \
   --height {} \
+  --output  C:\\Users\\Fluttyx\\Documents\\Dev\\StableDiff\\hello-rocket\\backend\\data\\output \
   --scheduler eulera \"", task.prompt, task.neg_prompt, task.guidance, task.steps, task.width, task.height);
 
-  let output = Command::new("cmd")
-      .raw_arg(args)
-      .output()
-      .expect("failed to execute process");
+  //let task = thread::spawn(move || {
+    let output = Command::new("cmd")
+        .raw_arg(args)
+        .output()
+        .expect("failed to execute process");
 
-      println!("status: {}", output.status);
-      println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
-      println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
-  //"La commande"
+    println!("status: {}", output.status);
+    println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+    println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
+  //});
+
+  let paths = fs::read_dir("./data/output").unwrap();
+
+  RawHtml(format!("<img src=\"data\\output\\{:0>6}-00.png\" alt=\"Generated Image\">", (paths.count() - 2).to_string()))
 }
 
 #[launch]

@@ -1,4 +1,5 @@
 use yew::prelude::*;
+use reqwasm::http::*;
 
 use crate::components;
 
@@ -17,7 +18,21 @@ impl Component for Home {
         Home {}
     }
 
+    //prompt=hahaha&neg_prompt=&steps=15&guidance=7.5&width=512&height=512
+    
     fn view(&self, _ctx: &Context<Self>) -> Html {
+        
+        
+        /*let resp = Request::post("/command")
+            .body("prompt=hahaha&neg_prompt=&steps=15&guidance=7.5&width=512&height=512")
+            .send()
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), 200);
+        }*/
+
+
         html! {
             <div class="d-flex justify-content-center m-5">
                 /*<h1>{"Building a Website in Rust"}</h1>*/

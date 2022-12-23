@@ -2,3 +2,4 @@
 */target
 /ui/dist/*.wasm
 /ui/dist/*.js
+/backend/data/output/*
