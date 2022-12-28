@@ -63,6 +63,10 @@ async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
     return RawHtml(format!("Forbidden character in negative prompt : {}", task.neg_prompt).clone());
   }
 
+  if u32::from(task.width) * u32::from(task.height) > 262144 {
+    return RawHtml(format!("Request failed due to image size, please reduce the image width ({}) or height({})", task.width, task.height).clone());
+  }
+
   let args = format!("/C start cmd.exe /c \"cd C:\\stable_diff \
   && .\\virtualenv\\Scripts\\activate \
   && python txt2img_onnx.py \

@@ -25,4 +25,5 @@ reqwasm = "0.4.0"
 serde = { version = "1.0.133", features = ["derive"] }
 # need wasm-bindgen for JsCast
 wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
 material-yew = {version = "0.2", features = ["button", "slider"] }

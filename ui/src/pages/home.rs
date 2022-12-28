@@ -1,5 +1,6 @@
 use yew::prelude::*;
 use reqwasm::http::*;
+use wasm_bindgen_futures::spawn_local;
 
 use crate::components;
 
@@ -23,14 +24,18 @@ impl Component for Home {
     fn view(&self, _ctx: &Context<Self>) -> Html {
         
         
-        /*let resp = Request::post("/command")
-            .body("prompt=hahaha&neg_prompt=&steps=15&guidance=7.5&width=512&height=512")
-            .send()
-            .await
-            .unwrap();
+        spawn_local(async {
+            let resp = Request::post("/command")
+                .body("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512")
+                .send()
+                .await
+                .unwrap();
+            
+            assert_eq!(resp.status(), 200);
+        });
 
-        assert_eq!(resp.status(), 200);
-        }*/
+
+        
 
 
         html! {
@@ -49,7 +54,7 @@ impl Component for Home {
                     </div>
                     <div>
                         <Range value=15. text={"steps"} name={"steps"} min=1. max=150. step=1.></Range>
-                        <Range value=7.5 text={"guidance"} name={"guidance"} min=1. max=50. step=0.1></Range>
+                        <Range value=7.5 text={"guidance"} name={"guidance"} min=1. max=25. step=0.1></Range>
                         <Range value=512. text={"width"} name={"width"} min=256. max=1024. step=64.></Range>
                         <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64.></Range>
                     </div>
