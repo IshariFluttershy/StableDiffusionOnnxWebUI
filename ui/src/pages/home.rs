@@ -48,9 +48,10 @@ impl Component for Home {
             };
 
             let resp = Request::post("/command")
-                //.body("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512")
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .body("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512")
                 //.body(wasm_bindgen::JsValue::from_str("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512"))
-                .body(to_value(&task).unwrap())
+                //.body(to_value(&task).unwrap())
                 .send()
                 .await
                 .unwrap();
