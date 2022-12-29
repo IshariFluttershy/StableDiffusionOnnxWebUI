@@ -1,6 +1,8 @@
+use serde::Serialize;
 use yew::prelude::*;
 use reqwasm::http::*;
 use wasm_bindgen_futures::spawn_local;
+use serde_wasm_bindgen::*;
 
 use crate::components;
 
@@ -8,6 +10,16 @@ use components::range::Range;
 
 
 pub struct Home;
+
+#[derive(Serialize)]
+struct Task<'r> {
+    prompt: &'r str,
+    neg_prompt: &'r str,
+    steps: u8,
+    guidance: f32,
+    width: u16,
+    height: u16,
+}
 
 impl Component for Home {
     type Message = ();
@@ -25,8 +37,20 @@ impl Component for Home {
         
         
         spawn_local(async {
+
+            let task = Task {
+                prompt:"bonjour",
+                neg_prompt: "aurevoir",
+                steps: 7,
+                guidance: 7.5,
+                width: 512,
+                height: 512,
+            };
+
             let resp = Request::post("/command")
-                .body("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512")
+                //.body("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512")
+                //.body(wasm_bindgen::JsValue::from_str("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512"))
+                .body(to_value(&task).unwrap())
                 .send()
                 .await
                 .unwrap();
