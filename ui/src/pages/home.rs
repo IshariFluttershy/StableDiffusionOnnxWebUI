@@ -39,7 +39,7 @@ impl Component for Home {
         spawn_local(async {
 
             let task = Task {
-                prompt:"bonjour",
+                prompt:"1girl",
                 neg_prompt: "aurevoir",
                 steps: 7,
                 guidance: 7.5,
