@@ -16,6 +16,7 @@ pub struct RangeProps {
     pub min: f32,
     pub max: f32,
     pub step: f32,
+    pub on_change: Callback<Event>,
 }
 
 pub enum Msg {
@@ -67,7 +68,7 @@ impl Component for Range {
                 <br/>
                 <input type="range" min={ctx.props().min.to_string()} max={ctx.props().max.to_string()} step={ctx.props().step.to_string()} class="form-range" id="myRange" name={ctx.props().text.clone()}
                     value={self.value.to_string()}
-                    //onchange={on_cautious_change}
+                    onchange={ctx.props().on_change.clone()}
                     oninput={on_cautious_input}
                 />
                 
