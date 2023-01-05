@@ -5,13 +5,14 @@ use yew::prelude::*;
 use reqwasm::http::*;
 use wasm_bindgen_futures::spawn_local;
 use serde_wasm_bindgen::*;
+use log::info;
 
 use crate::components;
 
 use components::range::Range;
 
 pub enum Msg {
-    OnChange(String),
+    OnChange(String, String),
     Clicked,
 }
 
@@ -43,15 +44,27 @@ impl Component for Home {
 
     //prompt=hahaha&neg_prompt=&steps=15&guidance=7.5&width=512&height=512
     
-    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         use Msg::*;
                 
         match msg {
-            OnChange(input) => {
+            OnChange(name, value) => {
+                info!("name:{} ---- value:{}", name, value);
                 /*self.prompt = input.clone();
                 self.neg_prompt = input.clone();*/
-                self.steps = input.parse::<u8>().unwrap();
-                /*self.guidance = input.parse::<f32>().unwrap();
+
+                if name == "steps" {
+                    self.steps = value.parse::<u8>().unwrap();
+                } else if name == "guidance" {
+                    self.guidance = value.parse::<f32>().unwrap();
+                } else if name == "width" {
+                    self.width = value.parse::<u16>().unwrap();
+                } else if name == "height" {
+                    self.height = value.parse::<u16>().unwrap();
+                }
+                
+                /*self.steps = input.parse::<u8>().unwrap();
+                self.guidance = input.parse::<f32>().unwrap();
                 self.width = input.parse::<u16>().unwrap();
                 self.height = input.parse::<u16>().unwrap();*/
 
@@ -134,7 +147,7 @@ impl Component for Home {
         let on_cautious_change = link.batch_callback(|e: Event| {
             let target: Option<EventTarget> = e.target();
             let input = target.and_then(|t| t.dyn_into::<HtmlInputElement>().ok());
-            input.map(|input| Msg::OnChange(input.value()))
+            input.map(|input| Msg::OnChange(input.name(), input.value()))
         });
 
         html! {
