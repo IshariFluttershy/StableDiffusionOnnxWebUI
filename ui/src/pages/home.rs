@@ -154,20 +154,22 @@ impl Component for Home {
         });
 
         html! {
-            <div class="d-flex justify-content-center m-5">
+            <div class="d-flex justify-content-center m-1">
                 /*<h1>{"Building a Website in Rust"}</h1>*/
-                <br/>
-                <br/>
                 //<form action="/command" method="post">
+                <div>
                     <div class="input-group">
-                        <span class="input-group-text">{"prompt"}</span>
-                        <input type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
+                        <span class="input-group-text">{"prompt"}</span> 
+                        <input class="input-group-text" type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
                     </div>
                     <br/>
                     <div class="input-group">
-                        <span class="input-group-text">{"negative prompt"}</span>
-                        <input type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
+                        <span class="input-group-text">{"negative prompt"}</span> 
+                        <input class="input-group-text" type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
                     </div>
+                    <p>{"hey"}</p>
+                </div>
+                <div>
                     <br/>
                     <div>
                         <Range value=15. text={"steps"} name={"steps"} min=1. max=150. step=1. on_change={on_cautious_change.clone()}></Range> <br/>
@@ -179,6 +181,7 @@ impl Component for Home {
                     <div class="button">
                         <button {onclick}>{"Envoyer le message"}</button>
                     </div>
+                </div>
                 //</form>
             </div>
         }
