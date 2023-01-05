@@ -50,8 +50,6 @@ impl Component for Home {
         match msg {
             OnChange(name, value) => {
                 info!("name:{} ---- value:{}", name, value);
-                /*self.prompt = input.clone();
-                self.neg_prompt = input.clone();*/
 
                 if name == "steps" {
                     self.steps = value.parse::<u8>().unwrap();
@@ -61,13 +59,11 @@ impl Component for Home {
                     self.width = value.parse::<u16>().unwrap();
                 } else if name == "height" {
                     self.height = value.parse::<u16>().unwrap();
+                } else if name == "prompt" {
+                    self.prompt = value;
+                } else if name == "neg_prompt" {
+                    self.neg_prompt = value;
                 }
-                
-                /*self.steps = input.parse::<u8>().unwrap();
-                self.guidance = input.parse::<f32>().unwrap();
-                self.width = input.parse::<u16>().unwrap();
-                self.height = input.parse::<u16>().unwrap();*/
-
             }
             Clicked => {
                 let prompt = self.prompt.clone();//String::from("test creation home");
@@ -150,6 +146,13 @@ impl Component for Home {
             input.map(|input| Msg::OnChange(input.name(), input.value()))
         });
 
+        let on_cautious_input = link.batch_callback(|e: InputEvent| {
+            let event: Event = e.dyn_into().unwrap();
+            let event_target = event.target().unwrap();
+            let target: Option<HtmlInputElement> = event_target.dyn_into().ok();
+            target.map(|input| Msg::OnChange(input.name(), input.value()))
+        });
+
         html! {
             <div class="d-flex justify-content-center m-5">
                 /*<h1>{"Building a Website in Rust"}</h1>*/
@@ -158,12 +161,12 @@ impl Component for Home {
                 //<form action="/command" method="post">
                     <div class="input-group">
                         <span class="input-group-text">{"prompt"}</span>
-                        <textarea class="form-control" aria-label="prompt" name="prompt"></textarea>
+                        <input type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
                     </div>
                     <br/>
                     <div class="input-group">
                         <span class="input-group-text">{"negative prompt"}</span>
-                        <textarea class="form-control" aria-label="negative prompt" name="neg_prompt" ></textarea>
+                        <input type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
                     </div>
                     <br/>
                     <div>
