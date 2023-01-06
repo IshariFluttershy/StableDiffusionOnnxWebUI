@@ -6,7 +6,7 @@ use rocket::{response::content, figment::Metadata};
 use rocket_dyn_templates::{Template, context};
 use std::{thread, fs};
 use rocket::fs::NamedFile;
-use rocket::response::status::NotFound;
+use rocket::response::status::{NotFound, self};
 use std::path::PathBuf;
 use rocket::form::Form;
 
@@ -96,6 +96,12 @@ async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
   RawHtml(format!("<img src=\"data\\output\\{:0>6}-00.png\" alt=\"Generated Image\">", (paths.count() - 2).to_string()))
 }
 
+#[get("/lastimage")]
+async fn lastimage() -> status::Accepted<String> {
+  let paths = fs::read_dir("./data/output").unwrap();
+  status::Accepted(Some(format!("{}", paths.count() - 2)))
+}
+
 #[launch]
 fn rocket() -> _ {
 
@@ -111,5 +117,5 @@ fn rocket() -> _ {
   });*/
 
     rocket::build()
-    .mount("/", routes![index, static_files, data, command])
+    .mount("/", routes![index, static_files, data, command, lastimage])
 }

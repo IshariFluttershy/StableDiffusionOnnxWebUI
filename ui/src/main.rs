@@ -47,7 +47,7 @@ impl App {
             <nav class="navbar navbar-expand-lg p-2 sticky-top navbar-dark bg-dark">
 
                 <Link<Route> classes={classes!("navbar-brand")} to={Route::Home}>
-                    {"Rust Website"}
+                    {""}
                 </Link<Route>>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
@@ -63,21 +63,7 @@ impl App {
                                     { "Home" }
                                 </Link<Route>>
                         </li>
-
-                        <li class="nav-item">
-                            <a href="https://github.com/nmharmon8/Rust_Rocket_Yew_Tutorial" class="nav-link">
-                            {"GitHubCode"}
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="https://theadventuresofaliceandbob.com/" class="nav-link">
-                            {"Blog"}
-                            </a>
-                        </li>
-
                     </ul>
-
                 </div>
             </nav>
         }
@@ -114,9 +100,9 @@ impl Component for App {
         html! {
             <BrowserRouter>
                 {self.view_nav(&ctx)}
-                <div class="justify-content-center m-5">
+                /*<div class="justify-content-center m-5">
                     <div class="container-fluid g-0" style="background-image: url('/data/images/banner-background.jpg'); height:108px;"/>
-                </div>
+                </div>*/
                 <main>
                     <Switch<Route> render={Switch::render(switch)} />
                 </main>

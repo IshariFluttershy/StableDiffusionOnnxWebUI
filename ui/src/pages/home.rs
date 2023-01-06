@@ -1,3 +1,5 @@
+use std::fs;
+
 use serde::Serialize;
 use wasm_bindgen::JsCast;
 use web_sys::{EventTarget, HtmlInputElement};
@@ -112,31 +114,51 @@ impl Component for Home {
             target.map(|input| Msg::OnChange(input.name(), input.value()))
         });
 
+        let result = String::from("26");
+
+        spawn_local(async {
+            let resp = Request::get("/lastimage")
+                .send()
+                .await
+                .unwrap()
+                .text()
+                .await
+                .unwrap();
+        });
+
         html! {
-            <div class="d-flex justify-content-center m-1">
-                <div>
+            <div>
+                <div class="col-6 col-s-6 menu">
                     <div>
-                        <span>{"Prompt : "}</span> 
-                        <input class="input-group-text test" type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
+                        <div>
+                            <span>{"Prompt : "}</span> 
+                            <input class="input-group-text test" type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
+                        </div>
+                        <br/>
+                        <div>
+                            <span >{"Negative prompt : "}</span> 
+                            <input class="input-group-text test" type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
+                        </div>
                     </div>
-                    <br/>
                     <div>
-                        <span >{"Negative prompt : "}</span> 
-                        <input class="input-group-text test" type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
+                        <br/>
+                        <div>
+                            <Range value=15. text={"steps"} name={"steps"} min=1. max=150. step=1. on_change={on_cautious_change.clone()}></Range> <br/>
+                            <Range value=7.5 text={"guidance"} name={"guidance"} min=1. max=25. step=0.1 on_change={on_cautious_change.clone()}></Range> <br/>
+                            <Range value=512. text={"width"} name={"width"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
+                            <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64. on_change={on_cautious_change}></Range> <br/>
+                        </div>
+                        <br/>
+                        <div class="button">
+                            <button {onclick}>{"Envoyer le message"}</button>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <br/>
-                    <div>
-                        <Range value=15. text={"steps"} name={"steps"} min=1. max=150. step=1. on_change={on_cautious_change.clone()}></Range> <br/>
-                        <Range value=7.5 text={"guidance"} name={"guidance"} min=1. max=25. step=0.1 on_change={on_cautious_change.clone()}></Range> <br/>
-                        <Range value=512. text={"width"} name={"width"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
-                        <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64. on_change={on_cautious_change}></Range> <br/>
-                    </div>
-                    <br/>
-                    <div class="button">
-                        <button {onclick}>{"Envoyer le message"}</button>
-                    </div>
+                <div class="col-6 col-s-6 menu">
+                    //<div class="container-fluid g-0" style="background-image: url('/data/output/000027-00.png'); height: 180px;"/>
+                    //<img src={format!("data\\output\\{:0>6}-00.png", (paths.count() - 2).to_string())} alt={"Generated Image"}/>
+                    //<img src={format!("data\\output\\{:0>6}-00.png", result)} alt={"Generated Image"}/>
+                    <img src={format!("data\\output\\{:0>6}-00.png", result)} alt={"Generated Image"}/>
                 </div>
             </div>
         }
