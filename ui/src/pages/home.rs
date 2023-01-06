@@ -41,8 +41,6 @@ impl Component for Home {
             height: 512,
         }
     }
-
-    //prompt=hahaha&neg_prompt=&steps=15&guidance=7.5&width=512&height=512
     
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         use Msg::*;
@@ -66,7 +64,7 @@ impl Component for Home {
                 }
             }
             Clicked => {
-                let prompt = self.prompt.clone();//String::from("test creation home");
+                let prompt = self.prompt.clone();
                 let neg_prompt = self.neg_prompt.clone();
                 let steps = self.steps;
                 let guidance = self.guidance;
@@ -74,20 +72,8 @@ impl Component for Home {
                 let height = self.height;
 
                 spawn_local(async move {
-
-                    /*let task = Task {
-                        prompt:"1girl",
-                        neg_prompt: "1boy",
-                        steps: 7,
-                        guidance: 7.5,
-                        width: 512,
-                        height: 512,
-                    };*/
-        
                     let resp = Request::post("/command")
                         .header("Content-Type", "application/x-www-form-urlencoded")
-                        //.body("prompt=1girl&neg_prompt=1boy&steps=7&guidance=7.5&width=512&height=512")
-                        //.body(wasm_bindgen::JsValue::from_str("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512"))
                         .body(wasm_bindgen::JsValue::from_str(
                             &format!("prompt={}&neg_prompt={}&steps={}&guidance={}&width={}&height={}",
                             prompt.clone(),
@@ -97,7 +83,6 @@ impl Component for Home {
                             width,
                             height
                             )))
-                        //.body(to_value(&task).unwrap())
                         .send()
                         .await
                         .unwrap();
@@ -110,33 +95,7 @@ impl Component for Home {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        
-        
         let onclick = ctx.link().callback(|_| Msg::Clicked);
-        /*let onclick: Callback<Event> = Callback::from(|_| spawn_local(async {
-
-            /*let task = Task {
-                prompt:"1girl",
-                neg_prompt: "1boy",
-                steps: 7,
-                guidance: 7.5,
-                width: 512,
-                height: 512,
-            };*/
-
-            let resp = Request::post("/command")
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                //.body("prompt=1girl&neg_prompt=1boy&steps=7&guidance=7.5&width=512&height=512")
-                .body(wasm_bindgen::JsValue::from_str("prompt=bonjoure&neg_prompt=aurevoir&steps=7&guidance=7.5&width=512&height=512"))
-                //.body(to_value(&task).unwrap())
-                .send()
-                .await
-                .unwrap();
-            
-            assert_eq!(resp.status(), 200);
-        }));*/
-
-        
 
         let link = ctx.link();
 
@@ -155,8 +114,6 @@ impl Component for Home {
 
         html! {
             <div class="d-flex justify-content-center m-1">
-                /*<h1>{"Building a Website in Rust"}</h1>*/
-                //<form action="/command" method="post">
                 <div>
                     <div>
                         <span>{"Prompt : "}</span> 
@@ -167,7 +124,6 @@ impl Component for Home {
                         <span >{"Negative prompt : "}</span> 
                         <input class="input-group-text test" type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
                     </div>
-                    <p>{"hey"}</p>
                 </div>
                 <div>
                     <br/>
@@ -182,7 +138,6 @@ impl Component for Home {
                         <button {onclick}>{"Envoyer le message"}</button>
                     </div>
                 </div>
-                //</form>
             </div>
         }
     }
