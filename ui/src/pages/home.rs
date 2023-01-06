@@ -158,14 +158,14 @@ impl Component for Home {
                 /*<h1>{"Building a Website in Rust"}</h1>*/
                 //<form action="/command" method="post">
                 <div>
-                    <div class="input-group">
-                        <span class="input-group-text">{"prompt"}</span> 
-                        <input class="input-group-text" type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
+                    <div>
+                        <span>{"Prompt : "}</span> 
+                        <input class="input-group-text test" type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
                     </div>
                     <br/>
-                    <div class="input-group">
-                        <span class="input-group-text">{"negative prompt"}</span> 
-                        <input class="input-group-text" type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
+                    <div>
+                        <span >{"Negative prompt : "}</span> 
+                        <input class="input-group-text test" type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
                     </div>
                     <p>{"hey"}</p>
                 </div>
