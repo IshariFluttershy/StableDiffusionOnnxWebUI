@@ -17,6 +17,11 @@ html {
   font-family: "Lucida Sans", sans-serif;
 }
 
+img {
+  width:100%;
+  height:auto;
+}
+
 .header {
   background-color: #9933cc;
   color: #ffffff;

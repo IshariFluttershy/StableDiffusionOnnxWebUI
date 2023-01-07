@@ -16,6 +16,8 @@ use components::range::Range;
 pub enum Msg {
     OnChange(String, String),
     Clicked,
+    /*GetImageNumber,
+    ImageNumberReceived(String),*/
 }
 
 pub struct Home {
@@ -25,6 +27,35 @@ pub struct Home {
     guidance: f32,
     width: u16,
     height: u16,
+}
+
+#[function_component(App)]
+fn app() -> Html {
+    let result = use_state(|| String::from(""));
+    {
+        let result = result.clone();
+        use_effect_with_deps(move |_| {
+            let result = result.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let fetched_data: String = Request::get("/lastimage")
+                .send()
+                .await
+                .unwrap()
+                .text()
+                .await
+                .unwrap();
+                result.set(fetched_data);
+        });
+        || ()
+    }, ());
+    }
+
+    info!("result last image = {}", (*result));
+    html! {
+        <div>
+            <img src={format!("data\\output\\{:0>6}-00.png", (*result))} alt={"Generated Image"}/>
+        </div>
+    }
 }
 
 impl Component for Home {
@@ -44,7 +75,8 @@ impl Component for Home {
         }
     }
     
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+
+    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         use Msg::*;
                 
         match msg {
@@ -92,6 +124,20 @@ impl Component for Home {
                     assert_eq!(resp.status(), 200);
                 });
             }
+            /*GetImageNumber => {
+                let request = Request::get("/lastimage");
+                let callback =
+                    ctx.link()
+                        .callback(|response: Response| {
+                            let data = response.text();
+                            Msg::ImageNumberReceived(data)
+                        });
+            }
+            ImageNumberReceived => {
+
+            }*/
+
+
         }
         true
     }
@@ -116,7 +162,7 @@ impl Component for Home {
 
         let result = String::from("26");
 
-        spawn_local(async {
+        /*spawn_local(async {
             let resp = Request::get("/lastimage")
                 .send()
                 .await
@@ -124,7 +170,10 @@ impl Component for Home {
                 .text()
                 .await
                 .unwrap();
-        });
+        });*/
+
+
+
 
         html! {
             <div>
@@ -155,10 +204,7 @@ impl Component for Home {
                     </div>
                 </div>
                 <div class="col-6 col-s-6 menu">
-                    //<div class="container-fluid g-0" style="background-image: url('/data/output/000027-00.png'); height: 180px;"/>
-                    //<img src={format!("data\\output\\{:0>6}-00.png", (paths.count() - 2).to_string())} alt={"Generated Image"}/>
-                    //<img src={format!("data\\output\\{:0>6}-00.png", result)} alt={"Generated Image"}/>
-                    <img src={format!("data\\output\\{:0>6}-00.png", result)} alt={"Generated Image"}/>
+                    <App/>
                 </div>
             </div>
         }
