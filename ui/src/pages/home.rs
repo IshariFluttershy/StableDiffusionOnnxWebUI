@@ -55,32 +55,6 @@ fn app(props: &Props) -> Html {
     }, props.render_switch);
     }
 
-    
-    /*let result = use_state(|| props.result.clone());
-    info!("result before = {}", (*result));
-    {
-        let result = result.clone();
-        //let result2 = result.clone();
-        use_effect(move || {
-            let result = result.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                let fetched_data: String = Request::get("/lastimage")
-                .send()
-                .await
-                .unwrap()
-                .text()
-                .await
-                .unwrap();
-                result.set(fetched_data);
-            });
-            || ()
-            /*{info!("result2 before = {}", (*result2));
-            result2.set("fetched_data".to_owned());
-            info!("result2 after = {}", (*result2))}*/
-        });
-    }*/
-
-    info!("result after = {}", (*result));
     html! {
         <div>
             <img src={format!("data\\output\\{:0>6}-00.png", (*result))} alt={"Generated Image"}/>
@@ -160,25 +134,9 @@ impl Component for Home {
             }
             ImageGenerated => {
                 self.rerender_image = !self.rerender_image;
-                info!("c'est passé par image generated");
                 return true;
             }
-            /*GetImageNumber => {
-                let request = Request::get("/lastimage");
-                let callback =
-                    ctx.link()
-                        .callback(|response: Response| {
-                            let data = response.text();
-                            Msg::ImageNumberReceived(data)
-                        });
-            }
-            ImageNumberReceived => {
-
-            }*/
-
-
         }
-        info!("update renvoie true");
         true
     }
 
