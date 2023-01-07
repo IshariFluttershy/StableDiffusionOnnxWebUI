@@ -16,8 +16,7 @@ use components::range::Range;
 pub enum Msg {
     OnChange(String, String),
     Clicked,
-    /*GetImageNumber,
-    ImageNumberReceived(String),*/
+    ImageGenerated,
 }
 
 pub struct Home {
@@ -27,10 +26,16 @@ pub struct Home {
     guidance: f32,
     width: u16,
     height: u16,
+    rerender_image: bool,
+}
+
+#[derive(Properties, PartialEq)]
+pub struct Props {
+    pub render_switch: bool,
 }
 
 #[function_component(App)]
-fn app() -> Html {
+fn app(props: &Props) -> Html {
     let result = use_state(|| String::from(""));
     {
         let result = result.clone();
@@ -47,10 +52,35 @@ fn app() -> Html {
                 result.set(fetched_data);
         });
         || ()
-    }, ());
+    }, props.render_switch);
     }
 
-    info!("result last image = {}", (*result));
+    
+    /*let result = use_state(|| props.result.clone());
+    info!("result before = {}", (*result));
+    {
+        let result = result.clone();
+        //let result2 = result.clone();
+        use_effect(move || {
+            let result = result.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let fetched_data: String = Request::get("/lastimage")
+                .send()
+                .await
+                .unwrap()
+                .text()
+                .await
+                .unwrap();
+                result.set(fetched_data);
+            });
+            || ()
+            /*{info!("result2 before = {}", (*result2));
+            result2.set("fetched_data".to_owned());
+            info!("result2 after = {}", (*result2))}*/
+        });
+    }*/
+
+    info!("result after = {}", (*result));
     html! {
         <div>
             <img src={format!("data\\output\\{:0>6}-00.png", (*result))} alt={"Generated Image"}/>
@@ -72,6 +102,7 @@ impl Component for Home {
             guidance: 7.5,
             width: 512,
             height: 512,
+            rerender_image: false,
         }
     }
     
@@ -105,6 +136,7 @@ impl Component for Home {
                 let width = self.width;
                 let height = self.height;
 
+                let link = ctx.link().clone();
                 spawn_local(async move {
                     let resp = Request::post("/command")
                         .header("Content-Type", "application/x-www-form-urlencoded")
@@ -122,7 +154,14 @@ impl Component for Home {
                         .unwrap();
                     
                     assert_eq!(resp.status(), 200);
+                    let cb = link.callback(|i:u8| Msg::ImageGenerated);
+                    cb.emit(0);
                 });
+            }
+            ImageGenerated => {
+                self.rerender_image = !self.rerender_image;
+                info!("c'est passé par image generated");
+                return true;
             }
             /*GetImageNumber => {
                 let request = Request::get("/lastimage");
@@ -139,6 +178,7 @@ impl Component for Home {
 
 
         }
+        info!("update renvoie true");
         true
     }
 
@@ -160,19 +200,7 @@ impl Component for Home {
             target.map(|input| Msg::OnChange(input.name(), input.value()))
         });
 
-        let result = String::from("26");
-
-        /*spawn_local(async {
-            let resp = Request::get("/lastimage")
-                .send()
-                .await
-                .unwrap()
-                .text()
-                .await
-                .unwrap();
-        });*/
-
-
+        info!("ca passe dans view");
 
 
         html! {
@@ -204,7 +232,7 @@ impl Component for Home {
                     </div>
                 </div>
                 <div class="col-6 col-s-6 menu">
-                    <App/>
+                    <App render_switch={self.rerender_image}/>
                 </div>
             </div>
         }
