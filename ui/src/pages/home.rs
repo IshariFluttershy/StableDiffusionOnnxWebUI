@@ -28,6 +28,7 @@ pub struct Home {
     height: u16,
     iterations: u16,
     model: String,
+    scheduler: String,
     rerender_image: bool,
 }
 
@@ -80,6 +81,7 @@ impl Component for Home {
             height: 512,
             iterations: 1,
             model: String::from(""),
+            scheduler: String::from(""),
             rerender_image: false,
         }
     }
@@ -109,12 +111,15 @@ impl Component for Home {
                     self.iterations = value.parse::<u16>().unwrap();
                 } else if name == "model" {
                     self.model = value;
+                } else if name == "scheduler" {
+                    self.scheduler = value;
                 }
             }
             Clicked => {
                 let prompt = self.prompt.clone();
                 let neg_prompt = self.neg_prompt.clone();
                 let model = self.model.clone();
+                let scheduler = self.scheduler.clone();
                 let steps = self.steps;
                 let guidance = self.guidance;
                 let width = self.width;
@@ -127,10 +132,11 @@ impl Component for Home {
                     let resp = Request::post("/command")
                         .header("Content-Type", "application/x-www-form-urlencoded")
                         .body(wasm_bindgen::JsValue::from_str(
-                            &format!("prompt={}&neg_prompt={}&model={}&steps={}&guidance={}&width={}&height={}&iterations={}",
+                            &format!("prompt={}&neg_prompt={}&model={}&scheduler={}&steps={}&guidance={}&width={}&height={}&iterations={}",
                             prompt.clone(),
                             neg_prompt.clone(),
                             model.clone(),
+                            scheduler.clone(),
                             steps,
                             guidance,
                             width,
@@ -194,6 +200,15 @@ impl Component for Home {
                         <option value="hassanblend_onnx">{"Hassanblend"}</option>
                         <option value="stable_diffusion_onnx" selected={true}>{"Stable Diffusion"}</option>
                         <option value="waifu-diffusion-diffusers-onnx-v1-3">{"Waifu Diffusion"}</option>
+                    </select>
+                    <select name="scheduler" id="scheduler-select" onchange={on_cautious_change_select.clone()}>
+                        <option value="pndm">{"PNDM"}</option>
+                        <option value="lms">{"LMS"}</option>
+                        <option value="ddim">{"DDIM"}</option>
+                        <option value="ddpm">{"DDPM"}</option>
+                        <option value="euler">{"Euler"}</option>
+                        <option value="eulera" selected={true}>{"EulerA"}</option>
+                        <option value="dpms">{"DPMS"}</option>
                     </select>
                     <div>
                         <div>
