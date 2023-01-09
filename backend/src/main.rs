@@ -50,6 +50,7 @@ struct Task<'r> {
     guidance: f32,
     width: u16,
     height: u16,
+    iterations: u16,
 }
 
 #[post("/command", data = "<task>")]
@@ -78,7 +79,8 @@ async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
   --width {} \
   --height {} \
   --output  C:\\Users\\Fluttyx\\Documents\\Dev\\StableDiff\\hello-rocket\\backend\\data\\output \
-  --scheduler eulera \"", task.prompt, task.neg_prompt, task.guidance, task.steps, task.width, task.height);
+  --iterations {} \
+  --scheduler eulera \"", task.prompt, task.neg_prompt, task.guidance, task.steps, task.width, task.height, task.iterations);
 
   //let task = thread::spawn(move || {
     let output = Command::new("cmd")

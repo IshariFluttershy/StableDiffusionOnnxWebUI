@@ -26,6 +26,7 @@ pub struct Home {
     guidance: f32,
     width: u16,
     height: u16,
+    iterations: u16,
     rerender_image: bool,
 }
 
@@ -76,6 +77,7 @@ impl Component for Home {
             guidance: 7.5,
             width: 512,
             height: 512,
+            iterations: 1,
             rerender_image: false,
         }
     }
@@ -100,6 +102,8 @@ impl Component for Home {
                     self.prompt = value;
                 } else if name == "neg_prompt" {
                     self.neg_prompt = value;
+                } else if name == "iterations" {
+                    self.iterations = value.parse::<u16>().unwrap();
                 }
             }
             Clicked => {
@@ -109,19 +113,22 @@ impl Component for Home {
                 let guidance = self.guidance;
                 let width = self.width;
                 let height = self.height;
+                let iterations = self.iterations;
+
 
                 let link = ctx.link().clone();
                 spawn_local(async move {
                     let resp = Request::post("/command")
                         .header("Content-Type", "application/x-www-form-urlencoded")
                         .body(wasm_bindgen::JsValue::from_str(
-                            &format!("prompt={}&neg_prompt={}&steps={}&guidance={}&width={}&height={}",
+                            &format!("prompt={}&neg_prompt={}&steps={}&guidance={}&width={}&height={}&iterations={}",
                             prompt.clone(),
                             neg_prompt.clone(),
                             steps,
                             guidance,
                             width,
-                            height
+                            height,
+                            iterations
                             )))
                         .send()
                         .await
@@ -181,7 +188,8 @@ impl Component for Home {
                             <Range value=15. text={"steps"} name={"steps"} min=1. max=150. step=1. on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=7.5 text={"guidance"} name={"guidance"} min=1. max=25. step=0.1 on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=512. text={"width"} name={"width"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
-                            <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64. on_change={on_cautious_change}></Range> <br/>
+                            <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
+                            <Range value=1. text={"iterations"} name={"iterations"} min=1. max=1000. step=1. on_change={on_cautious_change}></Range> <br/>
                         </div>
                         <br/>
                         <div class="button">
