@@ -192,18 +192,18 @@ impl Component for Home {
                 <div class="col-6 col-s-6 menu">
                     <select name="model" id="model-select" onchange={on_cautious_change_select.clone()}>
                         <option value="hassanblend_onnx">{"Hassanblend"}</option>
-                        <option value="stable_diffusion_onnx">{"Stable Diffusion"}</option>
+                        <option value="stable_diffusion_onnx" selected={true}>{"Stable Diffusion"}</option>
                         <option value="waifu-diffusion-diffusers-onnx-v1-3">{"Waifu Diffusion"}</option>
                     </select>
                     <div>
                         <div>
                             <span>{"Prompt : "}</span> 
-                            <textarea class="input-group-text test" type="textarea" name="prompt" onchange={on_cautious_change_textarea.clone()}/>
+                            <textarea name="prompt" onchange={on_cautious_change_textarea.clone()}/>
                         </div>
                         <br/>
                         <div>
                             <span >{"Negative prompt : "}</span> 
-                            <textarea class="input-group-text test" type="textarea" name="neg_prompt" onchange={on_cautious_change_textarea}/>
+                            <textarea name="neg_prompt" onchange={on_cautious_change_textarea}/>
                         </div>
                     </div>
                     <div>
