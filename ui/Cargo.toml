@@ -16,7 +16,7 @@ yew-router = "0.16.0"
 wasm-logger = "0.2.0"
 log = "0.4.14"
 #A WebAssembly bindgen
-web-sys = "0.3.56"
+web-sys = {version = "0.3.56", features = ["HtmlSelectElement"]}
 #A rust library that renders markup as HTML
 pulldown-cmark = "0.9.1"
 #Reqwasm will be used to send request to the backend

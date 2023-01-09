@@ -42,10 +42,11 @@ async fn index() -> Result<NamedFile, NotFound<String>> {
   get_index().await
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Debug)]
 struct Task<'r> {
     r#prompt: &'r str,
     r#neg_prompt: &'r str,
+    r#model: &'r str,
     steps: u8,
     guidance: f32,
     width: u16,
@@ -56,7 +57,7 @@ struct Task<'r> {
 #[post("/command", data = "<task>")]
 async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
   
-  println!("prompt : {} \n steps : {}", task.prompt, task.steps);
+  println!("command : {:?}", task);
 
   if task.prompt.contains("&") {
     return RawHtml(format!("Forbidden character in prompt : {}", task.prompt).clone());
@@ -71,7 +72,7 @@ async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
   let args = format!("/C start cmd.exe /c \"cd C:\\stable_diff \
   && .\\virtualenv\\Scripts\\activate \
   && python txt2img_onnx.py \
-  --model .\\model\\waifu-diffusion-diffusers-onnx-v1-3 \
+  --model .\\model\\{} \
   --prompt \"{}\" \
   --neg_prompt \"{}\" \
   --guidance-scale \"{}\" \
@@ -80,7 +81,7 @@ async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
   --height {} \
   --output  C:\\Users\\Fluttyx\\Documents\\Dev\\StableDiff\\hello-rocket\\backend\\data\\output \
   --iterations {} \
-  --scheduler eulera \"", task.prompt, task.neg_prompt, task.guidance, task.steps, task.width, task.height, task.iterations);
+  --scheduler eulera \"", task.model, task.prompt, task.neg_prompt, task.guidance, task.steps, task.width, task.height, task.iterations);
 
   //let task = thread::spawn(move || {
     let output = Command::new("cmd")

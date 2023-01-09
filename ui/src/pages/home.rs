@@ -2,7 +2,7 @@ use std::fs;
 
 use serde::Serialize;
 use wasm_bindgen::JsCast;
-use web_sys::{EventTarget, HtmlInputElement};
+use web_sys::{EventTarget, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement};
 use yew::prelude::*;
 use reqwasm::http::*;
 use wasm_bindgen_futures::spawn_local;
@@ -27,6 +27,7 @@ pub struct Home {
     width: u16,
     height: u16,
     iterations: u16,
+    model: String,
     rerender_image: bool,
 }
 
@@ -78,6 +79,7 @@ impl Component for Home {
             width: 512,
             height: 512,
             iterations: 1,
+            model: String::from(""),
             rerender_image: false,
         }
     }
@@ -85,7 +87,8 @@ impl Component for Home {
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         use Msg::*;
-                
+        info!("Ca passe dans update");
+
         match msg {
             OnChange(name, value) => {
                 info!("name:{} ---- value:{}", name, value);
@@ -104,11 +107,14 @@ impl Component for Home {
                     self.neg_prompt = value;
                 } else if name == "iterations" {
                     self.iterations = value.parse::<u16>().unwrap();
+                } else if name == "model" {
+                    self.model = value;
                 }
             }
             Clicked => {
                 let prompt = self.prompt.clone();
                 let neg_prompt = self.neg_prompt.clone();
+                let model = self.model.clone();
                 let steps = self.steps;
                 let guidance = self.guidance;
                 let width = self.width;
@@ -121,9 +127,10 @@ impl Component for Home {
                     let resp = Request::post("/command")
                         .header("Content-Type", "application/x-www-form-urlencoded")
                         .body(wasm_bindgen::JsValue::from_str(
-                            &format!("prompt={}&neg_prompt={}&steps={}&guidance={}&width={}&height={}&iterations={}",
+                            &format!("prompt={}&neg_prompt={}&model={}&steps={}&guidance={}&width={}&height={}&iterations={}",
                             prompt.clone(),
                             neg_prompt.clone(),
+                            model.clone(),
                             steps,
                             guidance,
                             width,
@@ -158,12 +165,24 @@ impl Component for Home {
             input.map(|input| Msg::OnChange(input.name(), input.value()))
         });
 
-        let on_cautious_input = link.batch_callback(|e: InputEvent| {
+        let on_cautious_change_select = link.batch_callback(|e: Event| {
+            let target: Option<EventTarget> = e.target();
+            let input = target.and_then(|t| t.dyn_into::<HtmlSelectElement>().ok());
+            input.map(|input| Msg::OnChange(input.name(), input.value()))
+        });
+
+        let on_cautious_change_textarea = link.batch_callback(|e: Event| {
+            let target: Option<EventTarget> = e.target();
+            let input = target.and_then(|t| t.dyn_into::<HtmlTextAreaElement>().ok());
+            input.map(|input| Msg::OnChange(input.name(), input.value()))
+        });
+
+        /*let on_cautious_input = link.batch_callback(|e: InputEvent| {
             let event: Event = e.dyn_into().unwrap();
             let event_target = event.target().unwrap();
             let target: Option<HtmlInputElement> = event_target.dyn_into().ok();
             target.map(|input| Msg::OnChange(input.name(), input.value()))
-        });
+        });*/
 
         info!("ca passe dans view");
 
@@ -171,15 +190,20 @@ impl Component for Home {
         html! {
             <div>
                 <div class="col-6 col-s-6 menu">
+                    <select name="model" id="model-select" onchange={on_cautious_change_select.clone()}>
+                        <option value="hassanblend_onnx">{"Hassanblend"}</option>
+                        <option value="stable_diffusion_onnx">{"Stable Diffusion"}</option>
+                        <option value="waifu-diffusion-diffusers-onnx-v1-3">{"Waifu Diffusion"}</option>
+                    </select>
                     <div>
                         <div>
                             <span>{"Prompt : "}</span> 
-                            <input class="input-group-text test" type="textarea" name="prompt" oninput={on_cautious_input.clone()} onchange={on_cautious_change.clone()}/>
+                            <textarea class="input-group-text test" type="textarea" name="prompt" onchange={on_cautious_change_textarea.clone()}/>
                         </div>
                         <br/>
                         <div>
                             <span >{"Negative prompt : "}</span> 
-                            <input class="input-group-text test" type="textarea" name="neg_prompt" oninput={on_cautious_input} onchange={on_cautious_change.clone()}/>
+                            <textarea class="input-group-text test" type="textarea" name="neg_prompt" onchange={on_cautious_change_textarea}/>
                         </div>
                     </div>
                     <div>
