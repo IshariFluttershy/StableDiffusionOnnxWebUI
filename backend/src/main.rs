@@ -94,9 +94,7 @@ async fn command(task: Form<Task<'_>>, jar: &CookieJar<'_>) -> RawHtml<String> {
 
   let paths = fs::read_dir("./data/output").unwrap();
 
-  if jar.get("other").is_none() {
-    jar.add(Cookie::new("generated", (paths.count() - 2).to_string()));
-  }
+  jar.add(Cookie::new("generated", (paths.count() - 2).to_string()));
 
   RawHtml(format!("<img src=\"data\\output\\{:0>6}-00.png\" alt=\"Generated Image\">", /*(paths.count() - 2).to_string()*/ 8))
 }
