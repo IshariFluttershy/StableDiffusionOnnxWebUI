@@ -9,6 +9,7 @@ use rocket::fs::NamedFile;
 use rocket::response::status::{NotFound, self};
 use std::path::PathBuf;
 use rocket::form::Form;
+use rocket::http::{Cookie, CookieJar};
 
 #[get("/data/<path..>")]
 async fn data(path: PathBuf) -> Result<NamedFile, NotFound<String>> {
@@ -56,7 +57,7 @@ struct Task<'r> {
 }
 
 #[post("/command", data = "<task>")]
-async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
+async fn command(task: Form<Task<'_>>, jar: &CookieJar<'_>) -> RawHtml<String> {
   
   println!("command : {:?}", task);
 
@@ -93,13 +94,20 @@ async fn command(task: Form<Task<'_>>) -> RawHtml<String> {
 
   let paths = fs::read_dir("./data/output").unwrap();
 
-  RawHtml(format!("<img src=\"data\\output\\{:0>6}-00.png\" alt=\"Generated Image\">", (paths.count() - 2).to_string()))
+  if jar.get("other").is_none() {
+    jar.add(Cookie::new("generated", (paths.count() - 2).to_string()));
+  }
+
+  RawHtml(format!("<img src=\"data\\output\\{:0>6}-00.png\" alt=\"Generated Image\">", /*(paths.count() - 2).to_string()*/ 8))
 }
 
 #[get("/lastimage")]
-async fn lastimage() -> status::Accepted<String> {
-  let paths = fs::read_dir("./data/output").unwrap();
-  status::Accepted(Some(format!("{}", paths.count() - 2)))
+async fn lastimage(jar: &CookieJar<'_>) -> status::Accepted<String> {
+  if let Some(cookie) = jar.get("generated") {
+    status::Accepted(Some(String::from(cookie.value())))
+  } else {
+    status::Accepted(None)
+  }
 }
 
 #[launch]
