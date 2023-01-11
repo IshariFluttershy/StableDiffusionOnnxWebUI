@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, rc::Rc};
 
 use serde::Serialize;
 use wasm_bindgen::JsCast;
@@ -17,6 +17,7 @@ pub enum Msg {
     OnChange(String, String),
     Clicked,
     ImageGenerated,
+    IsConnected(String),
 }
 
 pub struct Home {
@@ -30,6 +31,7 @@ pub struct Home {
     model: String,
     scheduler: String,
     rerender_image: bool,
+    connected: bool,
 }
 
 #[derive(Properties, PartialEq)]
@@ -69,8 +71,23 @@ impl Component for Home {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_ctx: &Context<Self>) -> Self {
+    fn create(ctx: &Context<Self>) -> Self {
         wasm_logger::init(wasm_logger::Config::default());
+
+        let link = ctx.link().clone();
+
+        wasm_bindgen_futures::spawn_local(async move {
+            let fetched_data: String = Request::get("/connected")
+            .send()
+            .await
+            .unwrap()
+            .text()
+            .await
+            .unwrap();
+            
+            let cb = link.callback(|data:String| Msg::IsConnected(data.clone()));
+            cb.emit(fetched_data);
+        });
 
         Home {
             prompt: String::from("test creation home"),
@@ -83,7 +100,10 @@ impl Component for Home {
             model: String::from(""),
             scheduler: String::from(""),
             rerender_image: false,
+            connected: false,
         }
+
+
     }
     
 
@@ -155,6 +175,13 @@ impl Component for Home {
             ImageGenerated => {
                 self.rerender_image = !self.rerender_image;
                 return true;
+            }
+            IsConnected(response) => {
+                info!("response == {}", response);
+
+                if response == "true" {
+                    self.connected = true;
+                }
             }
         }
         true
