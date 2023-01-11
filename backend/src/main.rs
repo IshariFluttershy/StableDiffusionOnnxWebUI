@@ -2,10 +2,11 @@
 use std::{process::Command, os::windows::process::CommandExt};
 
 use rocket::response::content::RawHtml;
+use rocket::tokio::io::AsyncReadExt;
 use rocket::{response::content, figment::Metadata};
 use rocket_dyn_templates::{Template, context};
 use std::{thread, fs};
-use rocket::fs::NamedFile;
+use rocket::fs::{NamedFile};
 use rocket::response::status::{NotFound, self};
 use std::path::PathBuf;
 use rocket::form::Form;
@@ -108,6 +109,25 @@ async fn lastimage(jar: &CookieJar<'_>) -> status::Accepted<String> {
   }
 }
 
+
+#[derive(FromForm, Debug)]
+struct Password<'r> {
+    r#pass: &'r str,
+}
+
+#[post("/adminconnect", data = "<password>")]
+async fn adminconnect(password: Form<Password<'_>>, jar: &CookieJar<'_>) -> RawHtml<String> {
+  let mut file = NamedFile::open("./secrets.txt").await.unwrap();
+  let mut good = String::new();
+  file.file_mut().read_to_string(&mut good).await.unwrap();
+
+  if password.pass.eq(&good) {
+    RawHtml(format!("connected"))
+  } else {
+    RawHtml(format!("wrong password"))
+  }
+}
+
 #[launch]
 fn rocket() -> _ {
 
@@ -122,6 +142,6 @@ fn rocket() -> _ {
       println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
   });*/
 
-    rocket::build()
-    .mount("/", routes![index, static_files, data, command, lastimage])
+  rocket::build()
+    .mount("/", routes![index, static_files, data, command, lastimage, adminconnect])
 }

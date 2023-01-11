@@ -5,6 +5,7 @@ mod components;
 
 
 use pages::home::Home;
+use pages::admin::Admin;
 use pages::not_found::NotFound;
 
 use yew_router::prelude::*;
@@ -13,6 +14,8 @@ use yew_router::prelude::*;
 pub enum Route {
     #[at("/")]
     Home,
+    #[at("/admin")]
+    Admin,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -22,6 +25,9 @@ fn switch(routes: &Route) -> Html {
     match routes {
         Route::Home => {
             html! { <Home /> }
+        }
+        Route::Admin => {
+            html! { <Admin /> }
         }
         _ => {
             html! { <NotFound /> }
