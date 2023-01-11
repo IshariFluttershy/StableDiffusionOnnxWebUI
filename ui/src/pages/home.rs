@@ -133,8 +133,8 @@ impl Component for Home {
             width: 512,
             height: 512,
             iterations: 1,
-            model: String::from(""),
-            scheduler: String::from(""),
+            model: String::from("stable_diffusion_onnx"),
+            scheduler: String::from("eulera"),
             rerender_image: false,
             connected: false,
         }
