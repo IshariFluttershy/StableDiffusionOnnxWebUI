@@ -67,6 +67,42 @@ fn app(props: &Props) -> Html {
     }
 }
 
+impl Home {
+    fn connectedModels(&self, ctx: &Context<Self>, cb: Callback<Event>) -> Html {
+        if self.connected == true {
+            html! {
+                <>
+                    <select name="model" id="model-select" onchange={cb}>
+                        <option value="stable_diffusion_onnx" selected={true}>{"Stable Diffusion"}</option>
+                        <option value="waifu-diffusion-diffusers-onnx-v1-3">{"Waifu Diffusion"}</option>
+                        <option value="hassanblend_onnx">{"Hassanblend"}</option>
+                    </select>
+                </>
+            }
+        } else {
+            html! {
+                <>
+                </>
+            }
+        }
+    }
+
+    fn connectedIterations(&self, ctx: &Context<Self>, cb: Callback<Event>) -> Html {
+        if self.connected == true {
+            html! {
+                <>
+                    <Range value=1. text={"iterations"} name={"iterations"} min=1. max=1000. step=1. on_change={cb}></Range> <br/>
+                </>
+            }
+        } else {
+            html! {
+                <>
+                </>
+            }
+        }
+    }
+}
+
 impl Component for Home {
     type Message = Msg;
     type Properties = ();
@@ -187,6 +223,8 @@ impl Component for Home {
         true
     }
 
+
+
     fn view(&self, ctx: &Context<Self>) -> Html {
         let onclick = ctx.link().callback(|_| Msg::Clicked);
 
@@ -217,17 +255,10 @@ impl Component for Home {
             target.map(|input| Msg::OnChange(input.name(), input.value()))
         });*/
 
-        info!("ca passe dans view");
-
-
         html! {
             <div>
                 <div class="col-6 col-s-6 menu">
-                    <select name="model" id="model-select" onchange={on_cautious_change_select.clone()}>
-                        <option value="hassanblend_onnx">{"Hassanblend"}</option>
-                        <option value="stable_diffusion_onnx" selected={true}>{"Stable Diffusion"}</option>
-                        <option value="waifu-diffusion-diffusers-onnx-v1-3">{"Waifu Diffusion"}</option>
-                    </select>
+                    {self.connectedModels(ctx, on_cautious_change_select.clone())}
                     <select name="scheduler" id="scheduler-select" onchange={on_cautious_change_select.clone()}>
                         <option value="pndm">{"PNDM"}</option>
                         <option value="lms">{"LMS"}</option>
@@ -251,11 +282,11 @@ impl Component for Home {
                     <div>
                         <br/>
                         <div>
-                            <Range value=15. text={"steps"} name={"steps"} min=1. max=150. step=1. on_change={on_cautious_change.clone()}></Range> <br/>
+                            <Range value=15. text={"steps"} name={"steps"} min=1. max=100. step=1. on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=7.5 text={"guidance"} name={"guidance"} min=1. max=25. step=0.1 on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=512. text={"width"} name={"width"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
-                            <Range value=1. text={"iterations"} name={"iterations"} min=1. max=1000. step=1. on_change={on_cautious_change}></Range> <br/>
+                            {self.connectedIterations(ctx, on_cautious_change.clone())}
                         </div>
                         <br/>
                         <div class="button">
