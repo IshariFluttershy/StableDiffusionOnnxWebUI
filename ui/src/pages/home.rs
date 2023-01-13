@@ -76,10 +76,7 @@ impl Home {
                 </>
             }
         } else {
-            html! {
-                <>
-                </>
-            }
+            html! {<></>}
         }
     }
 
@@ -91,10 +88,7 @@ impl Home {
                 </>
             }
         } else {
-            html! {
-                <>
-                </>
-            }
+            html! {<></>}
         }
     }
 }
@@ -134,14 +128,11 @@ impl Component for Home {
             rerender_image: false,
             connected: false,
         }
-
-
     }
     
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         use Msg::*;
-        info!("Ca passe dans update");
 
         match msg {
             OnChange(name, value) => {
@@ -209,8 +200,6 @@ impl Component for Home {
                 return true;
             }
             IsConnected(response) => {
-                info!("response == {}", response);
-
                 if response == "true" {
                     self.connected = true;
                 }
@@ -218,8 +207,6 @@ impl Component for Home {
         }
         true
     }
-
-
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let onclick = ctx.link().callback(|_| Msg::Clicked);
@@ -243,13 +230,6 @@ impl Component for Home {
             let input = target.and_then(|t| t.dyn_into::<HtmlTextAreaElement>().ok());
             input.map(|input| Msg::OnChange(input.name(), input.value()))
         });
-
-        /*let on_cautious_input = link.batch_callback(|e: InputEvent| {
-            let event: Event = e.dyn_into().unwrap();
-            let event_target = event.target().unwrap();
-            let target: Option<HtmlInputElement> = event_target.dyn_into().ok();
-            target.map(|input| Msg::OnChange(input.name(), input.value()))
-        });*/
 
         html! {
             <div>
