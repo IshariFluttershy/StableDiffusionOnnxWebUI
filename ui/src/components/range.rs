@@ -1,8 +1,6 @@
 use yew::{prelude::*};
 use wasm_bindgen::JsCast;
-use web_sys::{EventTarget, HtmlInputElement};
-use log::info;
-
+use web_sys::HtmlInputElement;
 
 pub struct Range {
     pub value: f32,
@@ -33,7 +31,7 @@ impl Component for Range {
         }  
     }
     
-    fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         use Msg::*;
                 
         match msg {
@@ -48,12 +46,6 @@ impl Component for Range {
       
       fn view(&self, ctx: &Context<Self>) -> Html {
         let link = ctx.link();
-
-        /*let on_cautious_change = link.batch_callback(|e: Event| {
-            let target: Option<EventTarget> = e.target();
-            let input = target.and_then(|t| t.dyn_into::<HtmlInputElement>().ok());
-            input.map(|input| Msg::OnChange(input.value()))
-        });*/
 
         let on_cautious_input = link.batch_callback(|e: InputEvent| {
             let event: Event = e.dyn_into().unwrap();

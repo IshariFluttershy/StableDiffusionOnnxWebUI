@@ -1,12 +1,8 @@
-use std::{fs, rc::Rc};
-
-use serde::Serialize;
 use wasm_bindgen::JsCast;
 use web_sys::{EventTarget, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement};
 use yew::prelude::*;
 use reqwasm::http::*;
 use wasm_bindgen_futures::spawn_local;
-use serde_wasm_bindgen::*;
 use log::info;
 
 use crate::components;
@@ -68,7 +64,7 @@ fn app(props: &Props) -> Html {
 }
 
 impl Home {
-    fn connectedModels(&self, ctx: &Context<Self>, cb: Callback<Event>) -> Html {
+    fn connected_models(&self, _ctx: &Context<Self>, cb: Callback<Event>) -> Html {
         if self.connected == true {
             html! {
                 <>
@@ -87,7 +83,7 @@ impl Home {
         }
     }
 
-    fn connectedIterations(&self, ctx: &Context<Self>, cb: Callback<Event>) -> Html {
+    fn connected_iterations(&self, _ctx: &Context<Self>, cb: Callback<Event>) -> Html {
         if self.connected == true {
             html! {
                 <>
@@ -204,7 +200,7 @@ impl Component for Home {
                         .unwrap();
                     
                     assert_eq!(resp.status(), 200);
-                    let cb = link.callback(|i:u8| Msg::ImageGenerated);
+                    let cb = link.callback(|_i:u8| Msg::ImageGenerated);
                     cb.emit(0);
                 });
             }
@@ -278,11 +274,11 @@ impl Component for Home {
                             <Range value=7.5 text={"guidance"} name={"guidance"} min=1. max=25. step=0.1 on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=512. text={"width"} name={"width"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
-                            {self.connectedIterations(ctx, on_cautious_change.clone())}
+                            {self.connected_iterations(ctx, on_cautious_change.clone())}
                         </div>
                         
                         <div>
-                            {self.connectedModels(ctx, on_cautious_change_select.clone())}
+                            {self.connected_models(ctx, on_cautious_change_select.clone())}
                             <select name="scheduler" id="scheduler-select" onchange={on_cautious_change_select.clone()}>
                                 <option value="pndm">{"PNDM"}</option>
                                 <option value="lms">{"LMS"}</option>
