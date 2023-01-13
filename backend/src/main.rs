@@ -3,9 +3,7 @@ use std::{process::Command, os::windows::process::CommandExt};
 
 use rocket::response::content::RawHtml;
 use rocket::tokio::io::AsyncReadExt;
-use rocket::{response::content, figment::Metadata};
-use rocket_dyn_templates::{Template, context};
-use std::{thread, fs};
+use std::fs;
 use rocket::fs::{NamedFile};
 use rocket::response::status::{NotFound, self};
 use std::path::PathBuf;
@@ -139,18 +137,6 @@ async fn adminconnect(password: Form<Password<'_>>, jar: &CookieJar<'_>) -> RawH
 
 #[launch]
 fn rocket() -> _ {
-
-  /*thread::spawn(move || {
-    let output = Command::new("cmd")
-      .raw_arg("/C start cmd.exe /k \"cd C:\\stable_diff && .\\virtualenv\\Scripts\\activate && python onnxUI.py\"")
-      .output()
-      .expect("failed to execute process");
-
-      println!("status: {}", output.status);
-      println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
-      println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
-  });*/
-
   rocket::build()
     .mount("/", routes![index, static_files, data, command, lastimage, adminconnect, connected])
 }
