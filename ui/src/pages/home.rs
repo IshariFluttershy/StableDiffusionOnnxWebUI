@@ -258,24 +258,16 @@ impl Component for Home {
         html! {
             <div>
                 <div class="col-6 col-s-6 menu">
-                    {self.connectedModels(ctx, on_cautious_change_select.clone())}
-                    <select name="scheduler" id="scheduler-select" onchange={on_cautious_change_select.clone()}>
-                        <option value="pndm">{"PNDM"}</option>
-                        <option value="lms">{"LMS"}</option>
-                        <option value="ddim">{"DDIM"}</option>
-                        <option value="ddpm">{"DDPM"}</option>
-                        <option value="euler">{"Euler"}</option>
-                        <option value="eulera" selected={true}>{"EulerA"}</option>
-                        <option value="dpms">{"DPMS"}</option>
-                    </select>
                     <div>
                         <div>
                             <span>{"Prompt : "}</span> 
+                            <br/>
                             <textarea name="prompt" onchange={on_cautious_change_textarea.clone()}/>
                         </div>
                         <br/>
                         <div>
                             <span >{"Negative prompt : "}</span> 
+                            <br/>
                             <textarea name="neg_prompt" onchange={on_cautious_change_textarea}/>
                         </div>
                     </div>
@@ -287,6 +279,19 @@ impl Component for Home {
                             <Range value=512. text={"width"} name={"width"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
                             <Range value=512. text={"height"} name={"height"} min=256. max=1024. step=64. on_change={on_cautious_change.clone()}></Range> <br/>
                             {self.connectedIterations(ctx, on_cautious_change.clone())}
+                        </div>
+                        
+                        <div>
+                            {self.connectedModels(ctx, on_cautious_change_select.clone())}
+                            <select name="scheduler" id="scheduler-select" onchange={on_cautious_change_select.clone()}>
+                                <option value="pndm">{"PNDM"}</option>
+                                <option value="lms">{"LMS"}</option>
+                                <option value="ddim">{"DDIM"}</option>
+                                <option value="ddpm">{"DDPM"}</option>
+                                <option value="euler">{"Euler"}</option>
+                                <option value="eulera" selected={true}>{"EulerA"}</option>
+                                <option value="dpms">{"DPMS"}</option>
+                            </select>
                         </div>
                         <br/>
                         <div class="button">
